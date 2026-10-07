@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Can We Clear The Air?</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-gradient-1: #eef2ff;
+      --bg-gradient-2: #e0e7ff;
+      --bg-gradient-3: #f0fdf4;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(99, 102, 241, 0.2);
+      --text-main: #1e1b4b;
+      --text-sub: #4b5563;
+      --text-muted: #6366f1;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-glow: rgba(79, 70, 229, 0.35);
+      --secondary-bg: #f8fafc;
+      --secondary-text: #334155;
+      --secondary-border: #e2e8f0;
+      --no-btn-bg: #f1f5f9;
+      --no-btn-text: #64748b;
+      --no-btn-border: #cbd5e1;
+      --card-shadow: 0 20px 45px -10px rgba(79, 70, 229, 0.12), 0 0 1px 1px rgba(99, 102, 241, 0.1);
+      --font-heading: 'Fredoka', cursive, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Floating Sparkles / Peace Signs */
+    .ambient-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      opacity: 0.35;
+      animation: floatUp 8s linear infinite;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) scale(0.7) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.45;
+      }
+      80% {
+        opacity: 0.45;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.1) rotate(30deg);
+        opacity: 0;
+      }
+    }
+
+    /* Outer Wrapper */
+    .apology-wrapper {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--card-border);
+      border-radius: 28px;
+      padding: clamp(24px, 5vw, 36px);
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      position: relative;
+    }
+
+    /* Mascot Area */
+    .mascot-container {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mascot-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 6px 14px rgba(79, 70, 229, 0.15));
+      transition: transform 0.3s ease;
+    }
+
+    .mascot-svg:hover {
+      transform: scale(1.04);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: var(--primary);
+      border: 1px solid #c7d2fe;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.6rem, 5.5vw, 2.1rem);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+      color: var(--text-sub);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    /* Truce Peace Box */
+    .options-box {
+      background: var(--secondary-bg);
+      border: 1.5px dashed var(--secondary-border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .options-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--secondary-text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .options-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--secondary-text);
+    }
+
+    .options-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    /* Button Area */
+    .button-area {
+      position: relative;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      touch-action: manipulation;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 24px var(--primary-glow);
+      z-index: 10;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+      animation: pulseYes 2s infinite ease-in-out;
+    }
+
+    .btn-yes:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+      transform: scale(1.06);
+      box-shadow: 0 12px 28px var(--primary-glow);
+    }
+
+    .btn-yes:active {
+      transform: scale(0.96);
+    }
+
+    @keyframes pulseYes {
+      0%, 100% {
+        box-shadow: 0 8px 24px var(--primary-glow);
+      }
+      50% {
+        box-shadow: 0 12px 30px rgba(79, 70, 229, 0.55);
+      }
+    }
+
+    .btn-no {
+      background: var(--no-btn-bg);
+      color: var(--no-btn-text);
+      border: 1.5px solid var(--no-btn-border);
+      position: relative;
+      z-index: 999999;
+      transition: top 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.2s ease, opacity 0.35s ease;
+      white-space: nowrap;
+      padding: 12px 22px;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      touch-action: none;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+
+    .btn-no.running {
+      position: fixed !important;
+      z-index: 999999 !important;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .btn-no.dodging {
+      animation: dodgeBounce 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes dodgeBounce {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.88, 1.15) rotate(-5deg); }
+      60% { transform: scale(1.12, 0.92) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Smoke puff */
+    .smoke-puff {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      z-index: 9998;
+      animation: puffFade 0.45s ease-out forwards;
+    }
+
+    @keyframes puffFade {
+      0% { opacity: 0.9; transform: scale(0.6) translateY(0); }
+      100% { opacity: 0; transform: scale(1.4) translateY(-18px); }
+    }
+
+    .hint-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      min-height: 22px;
+      font-weight: 500;
+    }
+
+    /* Stamina Bar */
+    .stamina-container {
+      margin-top: 14px;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 10px 14px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    .stamina-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .stamina-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .stamina-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+      border-radius: 999px;
+      transition: width 0.28s ease, background 0.3s ease;
+    }
+
+    /* Success Card */
+    .success-view {
+      display: none;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .certificate-card {
+      background: #f0fdf4;
+      border: 2px dashed #86efac;
+      border-radius: 20px;
+      padding: 18px;
+      margin: 18px 0 16px;
+      text-align: center;
+    }
+
+    .cert-title {
+      font-family: var(--font-heading);
+      color: #166534;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .cert-perks {
+      list-style: none;
+      font-size: 0.88rem;
+      color: #14532d;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 12px 0;
+      text-align: left;
+    }
+
+    .cert-perks li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .cert-footer {
+      font-size: 0.78rem;
+      color: #15803d;
+      border-top: 1px solid #bbf7d0;
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    /* Instagram Action Button */
+    .btn-insta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 20px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-insta:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 26px rgba(34, 197, 94, 0.45);
+    }
+
+    .btn-insta:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Particles Background -->
+  <div class="ambient-particles" id="particlesContainer"></div>
+
+  <div class="apology-wrapper">
+    <!-- Main Question Card -->
+    <div class="card" id="askCard">
+      <div class="badge" id="recipientTag">🏳️ Peace Offering</div>
+
+      <!-- Cute Polite Chibi Mascot with White Flag -->
+      <div class="mascot-container">
+        <svg class="mascot-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body / Head -->
+          <circle cx="100" cy="110" r="55" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="4"/>
+          <!-- Little Cat/Bear Ears -->
+          <path d="M60 70 L48 44 C45 38, 55 35, 62 42 L76 60 Z" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="3"/>
+          <path d="M140 70 L152 44 C155 38, 145 35, 138 42 L124 60 Z" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="3"/>
+          <!-- Polite Blush -->
+          <circle cx="70" cy="120" r="8" fill="#FCA5A5" opacity="0.6"/>
+          <circle cx="130" cy="120" r="8" fill="#FCA5A5" opacity="0.6"/>
+          <!-- Apologetic Eyes (>< or soft circles) -->
+          <circle cx="78" cy="104" r="6" fill="#312E81"/>
+          <circle cx="76" cy="102" r="2" fill="#FFFFFF"/>
+          <circle cx="122" cy="104" r="6" fill="#312E81"/>
+          <circle cx="120" cy="102" r="2" fill="#FFFFFF"/>
+          <!-- Little Awkward Smile / Bowing Mouth -->
+          <path d="M94 122 Q100 127 106 122" stroke="#312E81" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M97 113 L103 113" stroke="#818CF8" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Sweat Drop / Embarrassed -->
+          <path d="M138 90 C136 94, 134 97, 138 100 C142 97, 140 94, 138 90 Z" fill="#60A5FA"/>
+          <!-- Little White Peace Flag -->
+          <line x1="45" y1="90" x2="45" y2="155" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+          <path d="M46 92 L75 102 L46 114 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="2"/>
+          <text x="50" y="106" font-size="9" fill="#64748B" font-family="sans-serif" font-weight="bold">PEACE</text>
+          <!-- Paws -->
+          <circle cx="72" cy="142" r="10" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="2.5"/>
+          <circle cx="128" cy="142" r="10" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <h1 id="mainTitle">Hey, My Bad Honestly! 🙇‍♂️</h1>
+      <p class="subtitle" id="mainSubtitle">
+        I know you are annoyed with me, and it was totally my fault. No excuses. Can we just clear the air and reset?
+      </p>
+
+      <!-- Truce terms -->
+      <div class="options-box">
+        <div class="options-title">🤝 Truce Terms:</div>
+        <ul class="options-list">
+          <li><span>🫡</span> <span>I won’t repeat whatever dumb thing I did.</span></li>
+          <li><span>✌️</span> <span>Peace mode: activated.</span></li>
+          <li><span>🤝</span> <span>We’re good from here.</span></li>
+        </ul>
+      </div>
+
+      <!-- Interactive Yes / Runaway No Buttons -->
+      <div class="button-area" id="buttonArea">
+        <button class="btn btn-yes" id="btnYes">
+          <span>Yeah, all good! 🤝</span>
+        </button>
+        <button class="btn btn-no" id="noBtn">
+          <span>Nope 😐</span>
+        </button>
+      </div>
+
+      <!-- Stamina Bar Indicator -->
+      <div class="stamina-container" id="staminaContainer" style="display: none;">
+        <div class="stamina-header">
+          <span class="stamina-label">🏃‍♂️ 'No' Button Stamina:</span>
+          <span class="stamina-val" id="staminaVal">100% (Full Sprint ⚡)</span>
+        </div>
+        <div class="stamina-bar-bg">
+          <div class="stamina-bar-fill" id="staminaFill"></div>
+        </div>
+      </div>
+
+      <div class="hint-text" id="hintText"></div>
+    </div>
+
+    <!-- Success Celebration Card -->
+    <div class="card success-view" id="successCard">
+      <div class="mascot-container">
+        <!-- Happy Mascot with Peace Signs / Sunglasses -->
+        <svg class="mascot-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="110" r="55" fill="#EEF2FF" stroke="#86EFAC" stroke-width="4"/>
+          <!-- Ears -->
+          <path d="M60 70 L48 44 C45 38, 55 35, 62 42 L76 60 Z" fill="#EEF2FF" stroke="#86EFAC" stroke-width="3"/>
+          <path d="M140 70 L152 44 C155 38, 145 35, 138 42 L124 60 Z" fill="#EEF2FF" stroke="#86EFAC" stroke-width="3"/>
+          <!-- Happy Smile -->
+          <path d="M88 116 Q100 134 112 116 Z" fill="#16A34A"/>
+          <!-- Cool Sunglasses -->
+          <path d="M65 96 Q78 92 92 96 L92 108 Q78 112 65 108 Z" fill="#1E293B"/>
+          <path d="M108 96 Q122 92 135 96 L135 108 Q122 112 108 108 Z" fill="#1E293B"/>
+          <line x1="92" y1="100" x2="108" y2="100" stroke="#1E293B" stroke-width="3"/>
+          <!-- Thumbs up / peace hands -->
+          <circle cx="48" cy="115" r="14" fill="#EEF2FF" stroke="#86EFAC" stroke-width="2.5"/>
+          <text x="40" y="122" font-size="16">✌️</text>
+          <circle cx="152" cy="115" r="14" fill="#EEF2FF" stroke="#86EFAC" stroke-width="2.5"/>
+          <text x="144" y="122" font-size="16">👍</text>
+        </svg>
+      </div>
+
+      <h1 style="color: #166534;">Awesome! We're Cool 🤝🎉</h1>
+      <p class="subtitle" style="color: #374151;">
+        Appreciate you being chill about it! Let's get back to normal.
+      </p>
+
+      <!-- Truce Certificate -->
+      <div class="certificate-card">
+        <div class="cert-title">📜 Official Peace Accord</div>
+        <ul class="cert-perks">
+          <li><span>🌿</span> <span>Peace agreement successfully reached</span></li>
+          <li><span>📜</span> <span>All terms officially accepted</span></li>
+          <li><span>🏁</span> <span>Truce officially signed & accepted</span></li>
+        </ul>
+        <div class="cert-footer">Air officially cleared ✌️</div>
+      </div>
+
+      <a href="https://ig.me/m/harsh_240929" target="_blank" rel="noopener noreferrer" class="btn-insta" id="btnSendText">
+        <span>Text him: "All good, don't worry about it?"</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const btnYes = document.getElementById('btnYes');
+    const noBtn = document.getElementById('noBtn');
+    const askCard = document.getElementById('askCard');
+    const successCard = document.getElementById('successCard');
+    const hintText = document.getElementById('hintText');
+    const staminaContainer = document.getElementById('staminaContainer');
+    const staminaVal = document.getElementById('staminaVal');
+    const staminaFill = document.getElementById('staminaFill');
+    const recipientTag = document.getElementById('recipientTag');
+    const mainSubtitle = document.getElementById('mainSubtitle');
+    const btnSendText = document.getElementById('btnSendText');
+
+    let noCount = 0;
+    let yesScale = 1;
+    let isDisappeared = false;
+
+    const noPhrases = [
+      "Nope 😐",
+      "Wait, really? 😅",
+      "Are you sure? 🤔",
+      "Think again! 👀",
+      "Really think once... 🧐",
+      "Hear me out! ✋",
+      "My bad honestly! 🙇",
+      "Come on, peace? 🏳️",
+      "Okay fine, I'm going... 🚶‍♂️"
+    ];
+
+    const hintPhrases = [
+      "",
+      "Oops! That button is not cooperating! 😅",
+      "Come on, let's just clear the air! 🤝",
+      "The purple button works way better! 👉",
+      "The No button is running out of stamina... 🏃💨",
+      "Almost out of options! Just tap the truce! ✌️"
+    ];
+
+    // Sound Generator
+    function playBoop(pitch = 440) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(pitch, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } catch(e) {}
+    }
+
+    function playCelebration() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const notes = [440, 554.37, 659.25, 880];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.16, ctx.currentTime + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.08);
+          osc.stop(ctx.currentTime + idx * 0.08 + 0.25);
+        });
+      } catch(e) {}
+    }
+
+    // Distance calculation to closest point on the No button
+    function getDistanceToButton(clientX, clientY) {
+      if (!noBtn || noBtn.style.display === 'none') return Infinity;
+      const rect = noBtn.getBoundingClientRect();
+      const closestX = Math.max(rect.left, Math.min(clientX, rect.right));
+      const closestY = Math.max(rect.top, Math.min(clientY, rect.bottom));
+      const dx = clientX - closestX;
+      const dy = clientY - closestY;
+      return Math.hypot(dx, dy);
+    }
+
+    function createSmokePuff(x, y) {
+      try {
+        const puff = document.createElement('div');
+        puff.className = 'smoke-puff';
+        puff.textContent = '💨';
+        puff.style.left = `${x}px`;
+        puff.style.top = `${y}px`;
+        document.body.appendChild(puff);
+        setTimeout(() => puff.remove(), 450);
+      } catch(e) {}
+    }
+
+    // Coordinate generator: rigorously ensures button dodges ONLY INSIDE the mobile card container
+    function getNewPosition(avoidX, avoidY) {
+      const card = document.getElementById('askCard') || document.querySelector('.card');
+      const cardRect = card ? card.getBoundingClientRect() : {
+        left: 0,
+        top: 0,
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      const padding = 14;
+      const btnRect = noBtn.getBoundingClientRect();
+      const btnW = btnRect.width || noBtn.offsetWidth || 110;
+      const btnH = btnRect.height || noBtn.offsetHeight || 44;
+
+      // Safe boundaries strictly bounded inside the mobile card container
+      const minX = cardRect.left + padding;
+      const maxX = Math.max(minX, cardRect.left + cardRect.width - btnW - padding);
+      const minY = cardRect.top + padding;
+      const maxY = Math.max(minY, cardRect.top + cardRect.height - btnH - padding);
+
+      let targetX, targetY;
+      let attempts = 0;
+      let bestX = minX;
+      let bestY = minY;
+      let maxDist = -1;
+
+      do {
+        const candX = Math.round(minX + Math.random() * (maxX - minX));
+        const candY = Math.round(minY + Math.random() * (maxY - minY));
+        attempts++;
+
+        if (avoidX !== undefined && avoidY !== undefined) {
+          const centerX = candX + btnW / 2;
+          const centerY = candY + btnH / 2;
+          const dist = Math.hypot(avoidX - centerX, avoidY - centerY);
+
+          if (dist > maxDist) {
+            maxDist = dist;
+            bestX = candX;
+            bestY = candY;
+          }
+
+          // Jump away from finger/cursor while staying inside the mobile card
+          if (dist >= 100 || attempts > 30) {
+            targetX = candX;
+            targetY = candY;
+            break;
+          }
+        } else {
+          targetX = candX;
+          targetY = candY;
+          break;
+        }
+      } while (attempts <= 30);
+
+      if (targetX === undefined) {
+        targetX = bestX;
+        targetY = bestY;
+      }
+
+      // Hard clamp to ensure button NEVER leaves the mobile card boundary
+      targetX = Math.max(minX, Math.min(targetX, maxX));
+      targetY = Math.max(minY, Math.min(targetY, maxY));
+
+      return { x: targetX, y: targetY };
+    }
+
+    let isDodging = false;
+
+    // Disappear function when stamina reaches 0%
+    function makeNoDisappear() {
+      if (isDisappeared) return;
+      isDisappeared = true;
+
+      const rect = noBtn.getBoundingClientRect();
+      createSmokePuff(rect.left + rect.width / 4, rect.top + rect.height / 4);
+
+      noBtn.style.pointerEvents = 'none';
+      noBtn.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+      noBtn.style.opacity = '0';
+      noBtn.style.transform = 'scale(0.1) rotate(15deg)';
+
+      setTimeout(() => {
+        noBtn.style.display = 'none';
+      }, 450);
+
+      if (staminaVal) {
+        staminaVal.textContent = '0% (Gave up & vanished! 💨)';
+        staminaFill.style.background = '#ef4444';
+      }
+
+      if (hintText) {
+        hintText.textContent = "The 'No' button ran out of stamina and vanished! Only 'Yes' remains ✨";
+      }
+
+      yesScale = Math.max(yesScale, 1.35);
+      btnYes.style.transform = `scale(${yesScale})`;
+    }
+
+    // Move the "No" button away playfully
+    function runAway(avoidX, avoidY) {
+      if (isDisappeared) return;
+      if (isDodging) return;
+      isDodging = true;
+      setTimeout(() => { isDodging = false; }, 120);
+
+      const oldRect = noBtn.getBoundingClientRect();
+      if (!noBtn.classList.contains('running')) {
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = `${oldRect.left}px`;
+        noBtn.style.top = `${oldRect.top}px`;
+        noBtn.style.margin = '0';
+        noBtn.classList.add('running');
+        void noBtn.offsetWidth;
+      } else {
+        createSmokePuff(oldRect.left + oldRect.width / 4, oldRect.top + oldRect.height / 4);
+      }
+
+      noCount++;
+      playBoop(300 + Math.min(noCount * 40, 650));
+
+      // Calculate Stamina
+      const totalSteps = 8;
+      const staminaPercent = Math.max(0, Math.round(100 - (noCount / totalSteps) * 100));
+
+      if (staminaContainer) {
+        staminaContainer.style.display = 'block';
+        staminaFill.style.width = `${staminaPercent}%`;
+
+        if (staminaPercent > 65) {
+          staminaVal.textContent = `${staminaPercent}% (Sprinting 🏃‍♂️)`;
+          staminaFill.style.background = 'linear-gradient(90deg, #10b981 0%, #3b82f6 100%)';
+        } else if (staminaPercent > 35) {
+          staminaVal.textContent = `${staminaPercent}% (Huffing & puffing... 😮‍💨)`;
+          staminaFill.style.background = 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)';
+        } else if (staminaPercent > 0) {
+          staminaVal.textContent = `${staminaPercent}% (Legs are shaking! 🦵💦)`;
+          staminaFill.style.background = 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)';
+        } else {
+          staminaVal.textContent = `0% (Out of stamina! 🪫)`;
+          staminaFill.style.background = '#ef4444';
+        }
+      }
+
+      noBtn.classList.remove('dodging');
+      void noBtn.offsetWidth;
+      noBtn.classList.add('dodging');
+
+      const phraseIdx = Math.min(noCount, noPhrases.length - 1);
+      const spanEl = noBtn.querySelector('span');
+      if (spanEl) spanEl.textContent = noPhrases[phraseIdx];
+
+      const hintIdx = Math.min(noCount, hintPhrases.length - 1);
+      hintText.textContent = hintPhrases[hintIdx];
+
+      yesScale = Math.min(yesScale + 0.12, 1.8);
+      btnYes.style.transform = `scale(${yesScale})`;
+
+      const pos = getNewPosition(avoidX, avoidY);
+      noBtn.style.left = `${pos.x}px`;
+      noBtn.style.top = `${pos.y}px`;
+
+      // When stamina hits exactly 0%, disappear after the final dodge
+      if (staminaPercent === 0) {
+        setTimeout(() => {
+          makeNoDisappear();
+        }, 450);
+      }
+    }
+
+    function handleProximity(clientX, clientY) {
+      if (isDisappeared) return;
+      const dist = getDistanceToButton(clientX, clientY);
+      if (dist < 80) {
+        runAway(clientX, clientY);
+      }
+    }
+
+    // 1. Desktop Mouse Proximity
+    document.addEventListener('mousemove', (e) => {
+      handleProximity(e.clientX, e.clientY);
+    });
+
+    // 2. Desktop Direct Hover
+    noBtn.addEventListener('mouseenter', (e) => runAway(e.clientX, e.clientY));
+    noBtn.addEventListener('mouseover', (e) => runAway(e.clientX, e.clientY));
+    noBtn.addEventListener('pointerenter', (e) => runAway(e.clientX, e.clientY));
+    noBtn.addEventListener('pointerover', (e) => runAway(e.clientX, e.clientY));
+
+    // 3. Mobile Touch on Button
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const t = e.touches && e.touches[0];
+      runAway(t ? t.clientX : undefined, t ? t.clientY : undefined);
+    }, { passive: false });
+
+    noBtn.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const t = e.touches && e.touches[0];
+      runAway(t ? t.clientX : undefined, t ? t.clientY : undefined);
+    }, { passive: false });
+
+    noBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, { passive: false });
+
+    // 4. Mobile Proximity Touch
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        handleProximity(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        handleProximity(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    // 5. Click & Pointer Prevention
+    noBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      runAway(e.clientX, e.clientY);
+    });
+
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      runAway(e.clientX, e.clientY);
+    });
+
+    // 6. Mobile card & viewport resize safety repositioning
+    window.addEventListener('resize', () => {
+      if (noBtn.classList.contains('running')) {
+        const card = document.getElementById('askCard') || document.querySelector('.card');
+        const cardRect = card ? card.getBoundingClientRect() : {
+          left: 0,
+          top: 0,
+          width: window.innerWidth,
+          height: window.innerHeight
+        };
+        const padding = 14;
+        const btnRect = noBtn.getBoundingClientRect();
+        const btnW = btnRect.width || noBtn.offsetWidth || 110;
+        const btnH = btnRect.height || noBtn.offsetHeight || 44;
+        const minX = cardRect.left + padding;
+        const maxX = Math.max(minX, cardRect.left + cardRect.width - btnW - padding);
+        const minY = cardRect.top + padding;
+        const maxY = Math.max(minY, cardRect.top + cardRect.height - btnH - padding);
+        const curLeft = parseFloat(noBtn.style.left) || minX;
+        const curTop = parseFloat(noBtn.style.top) || minY;
+        noBtn.style.left = `${Math.max(minX, Math.min(curLeft, maxX))}px`;
+        noBtn.style.top = `${Math.max(minY, Math.min(curTop, maxY))}px`;
+      }
+    });
+
+    // YES Button Click
+    btnYes.addEventListener('click', () => {
+      playCelebration();
+
+      if (typeof confetti === 'function') {
+        const count = 180;
+        const defaults = { origin: { y: 0.7 } };
+
+        function fire(particleRatio, opts) {
+          confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+          }));
+        }
+
+        fire(0.25, { spread: 26, startVelocity: 55, colors: ['#4f46e5', '#6366f1', '#22c55e'] });
+        fire(0.2, { spread: 60, colors: ['#86efac', '#a5b4fc', '#ffffff'] });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+        fire(0.1, { spread: 120, startVelocity: 45 });
+      }
+
+      noBtn.style.display = 'none';
+      askCard.style.display = 'none';
+      successCard.style.display = 'block';
+
+      let end = Date.now() + 2500;
+      let interval = setInterval(function() {
+        if (Date.now() > end) return clearInterval(interval);
+        if (typeof confetti === 'function') {
+          confetti({
+            startVelocity: 30,
+            spread: 360,
+            ticks: 60,
+            origin: { x: Math.random(), y: Math.random() - 0.2 },
+            colors: ['#4f46e5', '#22c55e', '#a5b4fc', '#fbbf24']
+          });
+        }
+      }, 300);
+    });
+
+    // Ambient floating particles
+    const particlesContainer = document.getElementById('particlesContainer');
+    const particleIcons = ['✨', '⭐', '✌️', '🕊️', '💬', '⚡'];
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particleIcons[Math.floor(Math.random() * particleIcons.length)];
+      p.style.left = `${Math.random() * 95}vw`;
+      p.style.fontSize = `${Math.random() * 16 + 14}px`;
+      p.style.animationDelay = `${Math.random() * 7}s`;
+      p.style.animationDuration = `${Math.random() * 5 + 6}s`;
+      particlesContainer.appendChild(p);
+    }
+
+    // Instagram redirect click
+    btnSendText.addEventListener('click', (e) => {
+      // Direct link to Instagram message
+      const instaUrl = 'https://ig.me/m/harsh_240929';
+      e.preventDefault();
+      window.open(instaUrl, '_blank', 'noopener,noreferrer');
+    });
+  </script>
+</body>
+</html>
